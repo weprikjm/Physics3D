@@ -83,12 +83,33 @@ bool ModuleRenderer3D::Init()
 			LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
+
+		GLfloat LightModelAmbient[] = {0.0f, 0.0f, 0.0f, 1.0f};
+		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, LightModelAmbient);
+
+		
+		lights[0].ref = GL_LIGHT0;
+		lights[0].ambient.Set(0.25f, 0.25f, 0.25f, 1.0f);
+		lights[0].diffuse.Set(0.75f, 0.75f, 0.75f, 1.0f);
+		lights[0].SetPos(0.0f, 0.0f, 2.5f);
+		lights[0].Init();
+		
+		GLfloat MaterialAmbient[] = {1.0f, 1.0f, 1.0f, 1.0f};
+		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
+
+		GLfloat MaterialDiffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
+		glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MaterialDiffuse);
+
+		glEnable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+		lights[0].Active(true);
+		glEnable(GL_LIGHTING);
+		glEnable(GL_COLOR_MATERIAL);
 	}
 
 	// Projection matrix for
 	OnResize(SCREEN_WIDTH, SCREEN_HEIGHT);
 	
-	//camera.Look(vec3(1.75f, 1.75f, 5.0f), vec3(0.0f, 0.0f, 0.0f));
 	App->camera->Look(vec3(1.75f, 1.75f, 5.0f), vec3(0.0f, 0.0f, 0.0f));
 
 	return ret;
@@ -102,6 +123,9 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixf(App->camera->GetViewMatrix());
+
+	for(uint i = 0; i < MAX_LIGHTS; ++i)
+		lights[i].Render();
 
 	return UPDATE_CONTINUE;
 }
