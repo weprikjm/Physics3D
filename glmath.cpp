@@ -495,6 +495,11 @@ vec4 operator * (const mat4x4 &Matrix, const vec4 &u)
 
 mat4x4 BiasMatrix = mat4x4(0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, 0.5f, 0.5f, 1.0f);
 mat4x4 BiasMatrixInverse = mat4x4(2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 2.0f, 0.0f, -1.0f, -1.0f, -1.0f, 1.0f);
+mat4x4 IdentityMatrix = mat4x4(
+	1.0f, 0.0f, 0.0f, 0.0f, 
+	0.0f, 1.0f, 0.0f, 0.0f,
+	0.0f, 0.0f, 1.0f, 0.0f, 
+	0.0f, 0.0f, 0.0f, 1.0f);
 
 // ----------------------------------------------------------------------------------------------------------------------------
 //
@@ -515,6 +520,155 @@ float det3x3sub(const float *m, int i0, int i1, int i2, int i3, int i4, int i5, 
 
 	return det;
 }
+
+mat4x4& mat4x4::inverse()
+{
+	const float *m = M;
+
+	float det = 0.0f;
+
+	det += m[0] * det3x3sub(m, 5, 6, 7, 9, 10, 11, 13, 14, 15);
+	det -= m[4] * det3x3sub(m, 1, 2, 3, 9, 10, 11, 13, 14, 15);
+	det += m[8] * det3x3sub(m, 1, 2, 3, 5, 6, 7, 13, 14, 15);
+	det -= m[12] * det3x3sub(m, 1, 2, 3, 5, 6, 7, 9, 10, 11);
+
+	mat4x4 Inverse;
+
+	Inverse.M[0] = det3x3sub(m, 5, 6, 7, 9, 10, 11, 13, 14, 15) / det;
+	Inverse.M[1] = -det3x3sub(m, 1, 2, 3, 9, 10, 11, 13, 14, 15) / det;
+	Inverse.M[2] = det3x3sub(m, 1, 2, 3, 5, 6, 7, 13, 14, 15) / det;
+	Inverse.M[3] = -det3x3sub(m, 1, 2, 3, 5, 6, 7, 9, 10, 11) / det;
+	Inverse.M[4] = -det3x3sub(m, 4, 6, 7, 8, 10, 11, 12, 14, 15) / det;
+	Inverse.M[5] = det3x3sub(m, 0, 2, 3, 8, 10, 11, 12, 14, 15) / det;
+	Inverse.M[6] = -det3x3sub(m, 0, 2, 3, 4, 6, 7, 12, 14, 15) / det;
+	Inverse.M[7] = det3x3sub(m, 0, 2, 3, 4, 6, 7, 8, 10, 11) / det;
+	Inverse.M[8] = det3x3sub(m, 4, 5, 7, 8, 9, 11, 12, 13, 15) / det;
+	Inverse.M[9] = -det3x3sub(m, 0, 1, 3, 8, 9, 11, 12, 13, 15) / det;
+	Inverse.M[10] = det3x3sub(m, 0, 1, 3, 4, 5, 7, 12, 13, 15) / det;
+	Inverse.M[11] = -det3x3sub(m, 0, 1, 3, 4, 5, 7, 8, 9, 11) / det;
+	Inverse.M[12] = -det3x3sub(m, 4, 5, 6, 8, 9, 10, 12, 13, 14) / det;
+	Inverse.M[13] = det3x3sub(m, 0, 1, 2, 8, 9, 10, 12, 13, 14) / det;
+	Inverse.M[14] = -det3x3sub(m, 0, 1, 2, 4, 5, 6, 12, 13, 14) / det;
+	Inverse.M[15] = det3x3sub(m, 0, 1, 2, 4, 5, 6, 8, 9, 10) / det;
+
+	operator=(Inverse);
+
+	return *this;
+}
+
+mat4x4& mat4x4::look(const vec3 &eye, const vec3 &center, const vec3 &up)
+{
+	vec3 Z = normalize(eye - center);
+	vec3 X = normalize(cross(up, Z));
+	vec3 Y = cross(Z, X);
+
+	M[0] = X.x;
+	M[1] = Y.x;
+	M[2] = Z.x;
+	M[4] = X.y;
+	M[5] = Y.y;
+	M[6] = Z.y;
+	M[8] = X.z;
+	M[9] = Y.z;
+	M[10] = Z.z;
+	M[12] = -dot(X, eye);
+	M[13] = -dot(Y, eye);
+	M[14] = -dot(Z, eye);
+
+	return *this;
+}
+
+mat4x4& mat4x4::ortho(float left, float right, float bottom, float top, float n, float f)
+{
+	M[0] = 2.0f / (right - left);
+	M[5] = 2.0f / (top - bottom);
+	M[10] = -2.0f / (f - n);
+	M[12] = -(right + left) / (right - left);
+	M[13] = -(top + bottom) / (top - bottom);
+	M[14] = -(f + n) / (f - n);
+
+	return *this;
+}
+
+mat4x4& mat4x4::perspective(float fovy, float aspect, float n, float f)
+{
+	float coty = 1.0f / tan(fovy * (float)M_PI / 360.0f);
+
+	M[0] = coty / aspect;
+	M[5] = coty;
+	M[10] = (n + f) / (n - f);
+	M[11] = -1.0f;
+	M[14] = 2.0f * n * f / (n - f);
+	M[15] = 0.0f;
+
+	return *this;
+}
+
+mat4x4& mat4x4::rotate(float angle, const vec3 &u)
+{
+	angle = angle / 180.0f * (float)M_PI;
+
+	vec3 v = normalize(u);
+
+	float c = 1.0f - cos(angle), s = sin(angle);
+
+	M[0] = 1.0f + c * (v.x * v.x - 1.0f);
+	M[1] = c * v.x * v.y + v.z * s;
+	M[2] = c * v.x * v.z - v.y * s;
+	M[4] = c * v.x * v.y - v.z * s;
+	M[5] = 1.0f + c * (v.y * v.y - 1.0f);
+	M[6] = c * v.y * v.z + v.x * s;
+	M[8] = c * v.x * v.z + v.y * s;
+	M[9] = c * v.y * v.z - v.x * s;
+	M[10] = 1.0f + c * (v.z * v.z - 1.0f);
+
+	return *this;
+}
+
+mat4x4& mat4x4::scale(float x, float y, float z)
+{
+	M[0] = x;
+	M[5] = y;
+	M[10] = z;
+
+	return *this;
+}
+
+mat4x4& mat4x4::translate(float x, float y, float z)
+{
+	M[12] = x;
+	M[13] = y;
+	M[14] = z;
+
+	return *this;
+}
+
+mat4x4& mat4x4::transpose()
+{
+	mat4x4 Transpose;
+
+	Transpose.M[0] = M[0];
+	Transpose.M[1] = M[4];
+	Transpose.M[2] = M[8];
+	Transpose.M[3] = M[12];
+	Transpose.M[4] = M[1];
+	Transpose.M[5] = M[5];
+	Transpose.M[6] = M[9];
+	Transpose.M[7] = M[13];
+	Transpose.M[8] = M[2];
+	Transpose.M[9] = M[6];
+	Transpose.M[10] = M[10];
+	Transpose.M[11] = M[14];
+	Transpose.M[12] = M[3];
+	Transpose.M[13] = M[7];
+	Transpose.M[14] = M[11];
+	Transpose.M[15] = M[15];
+
+	operator=(Transpose);
+
+	return *this;
+}
+
 
 mat4x4 inverse(const mat4x4 &Matrix)
 {
