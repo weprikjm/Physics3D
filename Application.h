@@ -5,12 +5,10 @@
 #include "Timer.h"
 #include "Module.h"
 #include "ModuleWindow.h"
-#include "ModuleRender.h"
-#include "ModuleTextures.h"
 #include "ModuleInput.h"
 #include "ModuleAudio.h"
 #include "ModulePlayer.h"
-#include "ModulePhysics.h"
+#include "ModulePhysics3D.h"
 #include "ModuleSceneIntro.h"
 #include "ModuleRenderer3D.h"
 #include "ModuleCamera3D.h"
@@ -18,14 +16,12 @@
 class Application
 {
 public:
-	ModuleRender* renderer;
 	ModuleWindow* window;
-	ModuleTextures* textures;
 	ModuleInput* input;
 	ModuleAudio* audio;
 	ModulePlayer* player;
 	ModuleSceneIntro* scene_intro;
-	ModulePhysics* physics;
+	ModulePhysics3D* physics3D;
 	ModuleRenderer3D* renderer3D;
 	ModuleCamera3D* camera;
 

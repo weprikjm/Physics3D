@@ -8,14 +8,12 @@ Application::Application()
 	capped_ms = 1000 / 60;
 	fps_counter = 0;
 
-	renderer = new ModuleRender(this);
 	window = new ModuleWindow(this);
-	textures = new ModuleTextures(this);
 	input = new ModuleInput(this);
 	audio = new ModuleAudio(this, true);
 	player = new ModulePlayer(this);
 	scene_intro = new ModuleSceneIntro(this);
-	physics = new ModulePhysics(this);
+	physics3D = new ModulePhysics3D(this);
 	renderer3D = new ModuleRenderer3D(this);
 	camera = new ModuleCamera3D(this);
 
@@ -25,11 +23,9 @@ Application::Application()
 
 	// Main Modules
 	AddModule(window);
-	AddModule(physics);
-	//AddModule(renderer);
+	AddModule(physics3D);
 	AddModule(renderer3D);
 	AddModule(camera);
-	AddModule(textures);
 	AddModule(input);
 	AddModule(audio);
 	

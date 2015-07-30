@@ -133,7 +133,6 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 // Update: debug camera
 update_status ModuleRenderer3D::Update(float dt)
 {
-
 	return UPDATE_CONTINUE;
 }
 
