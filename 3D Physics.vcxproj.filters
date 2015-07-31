@@ -78,6 +78,12 @@
     <ClInclude Include="ModulePhysics3D.h">
       <Filter>Sources\Modules</Filter>
     </ClInclude>
+    <ClInclude Include="PhysBody3D.h">
+      <Filter>Sources\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysPrimitive.h">
+      <Filter>Sources\Helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModuleAudio.cpp">
@@ -127,6 +133,12 @@
     </ClCompile>
     <ClCompile Include="ModulePlayer.cpp">
       <Filter>Sources\Modules\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysBody3D.cpp">
+      <Filter>Sources\Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysPrimitive.cpp">
+      <Filter>Sources\Helpers</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

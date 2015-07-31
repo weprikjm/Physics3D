@@ -26,10 +26,10 @@ public:
 class Cube : public Primitive
 {
 public :
-	Cube(float size);
+	Cube(float sizeX, float sizeY, float sizeZ);
 	void InnerRender() const;
 public:
-	float size;
+	vec3 size;
 };
 
 // ============================================

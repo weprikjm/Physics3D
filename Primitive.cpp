@@ -52,12 +52,54 @@ void Primitive::Scale(float x, float y, float z)
 }
 
 // CUBE ============================================
-Cube::Cube(float size) : Primitive(), size(size)
+Cube::Cube(float sizeX, float sizeY, float sizeZ) : Primitive(), size(sizeX, sizeY, sizeZ)
 {}
 
 void Cube::InnerRender() const
 {	
-	glutSolidCube(size);
+	float sx = size.x * 0.5f;
+	float sy = size.y * 0.5f;
+	float sz = size.z * 0.5f;
+
+	glBegin(GL_QUADS);
+
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	glVertex3f(-sx, -sy, sz);
+	glVertex3f( sx, -sy, sz);
+	glVertex3f( sx,  sy, sz);
+	glVertex3f(-sx,  sy, sz);
+
+	glNormal3f(0.0f, 0.0f, -1.0f);
+	glVertex3f( sx, -sy, -sz);
+	glVertex3f(-sx, -sy, -sz);
+	glVertex3f(-sx,  sy, -sz);
+	glVertex3f( sx,  sy, -sz);
+
+	glNormal3f(1.0f, 0.0f, 0.0f);
+	glVertex3f(sx, -sy,  sz);
+	glVertex3f(sx, -sy, -sz);
+	glVertex3f(sx,  sy, -sz);
+	glVertex3f(sx,  sy,  sz);
+
+	glNormal3f(-1.0f, 0.0f, 0.0f);
+	glVertex3f(-sx, -sy, -sz);
+	glVertex3f(-sx, -sy,  sz);
+	glVertex3f(-sx,  sy,  sz);
+	glVertex3f(-sx,  sy, -sz);
+
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(-sx, sy,  sz);
+	glVertex3f( sx, sy,  sz);
+	glVertex3f( sx, sy, -sz);
+	glVertex3f(-sx, sy, -sz);
+
+	glNormal3f(0.0f, -1.0f, 0.0f);
+	glVertex3f(-sx, -sy, -sz);
+	glVertex3f( sx, -sy, -sz);
+	glVertex3f( sx, -sy,  sz);
+	glVertex3f(-sx, -sy,  sz);
+
+	glEnd();
 }
 
 // SPHERE ============================================

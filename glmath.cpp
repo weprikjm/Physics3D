@@ -455,6 +455,11 @@ float* mat4x4::operator & ()
 	return (float*)this;
 }
 
+const float* mat4x4::operator & () const
+{
+	return (float*)this;
+}
+
 mat4x4 operator * (const mat4x4 &Matrix1, const mat4x4 &Matrix2)
 {
 	mat4x4 Matrix3;
@@ -667,6 +672,11 @@ mat4x4& mat4x4::transpose()
 	operator=(Transpose);
 
 	return *this;
+}
+
+vec3 mat4x4::translation() const
+{
+	return(vec3(M[12], M[13], M[14]));
 }
 
 

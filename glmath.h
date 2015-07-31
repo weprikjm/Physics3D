@@ -481,6 +481,7 @@ public:
 	mat4x4& operator = (const mat4x4 &Matrix);
 	float& operator [] (int i);
 	float* operator & ();
+	const float* operator & () const;
 	friend mat4x4 operator * (const mat4x4 &Matrix1, const mat4x4 &Matrix2);
 	friend vec4 operator * (const mat4x4 &Matrix, const vec4 &u);
 
@@ -492,6 +493,7 @@ public:
 	mat4x4& scale(float x, float y, float z);
 	mat4x4& translate(float x, float y, float z);
 	mat4x4& transpose();
+	vec3  translation() const;
 };
 
 // ----------------------------------------------------------------------------------------------------------------------------
