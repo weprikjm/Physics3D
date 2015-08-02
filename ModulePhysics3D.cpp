@@ -17,7 +17,7 @@
 
 ModulePhysics3D::ModulePhysics3D(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
-	debug = false;
+	debug = true;
 }
 
 // Destructor
@@ -49,6 +49,7 @@ bool ModulePhysics3D::Start()
 	LOG("Creating Physics environment");
 
 	world = new btDiscreteDynamicsWorld(dispatcher, broad_phase, solver, collision_conf);
+	//world->setDebugDrawer()
 	world->setGravity(GRAVITY);
 
 	return true;
@@ -105,10 +106,35 @@ PhysBody3D* ModulePhysics3D::AddBody(const Sphere& sphere, float mass)
 }
 
 // ---------------------------------------------------------
+PhysBody3D* ModulePhysics3D::AddBody(const Cylinder& cylinder, float mass)
+{
+	btCollisionShape* colShape = new btCylinderShape(btCylinderShapeZ(btVector3(cylinder.radius, 0.0f, cylinder.height*0.5f)));
+
+	btTransform startTransform;
+	startTransform.setFromOpenGLMatrix(&cylinder.transform);
+
+	btVector3 localInertia(0, 0, 0);
+	if(mass != 0.f)
+		colShape->calculateLocalInertia(mass, localInertia);
+
+	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+
+	btRigidBody* body = new btRigidBody(rbInfo);
+	PhysBody3D* pbody = new PhysBody3D(colShape, body, new Cylinder(cylinder));
+
+	body->setUserPointer(pbody);
+	world->addRigidBody(body);
+	bodies.PushBack(pbody);
+
+	return pbody;
+}
+
+// ---------------------------------------------------------
 update_status ModulePhysics3D::PreUpdate(float dt)
 {
 	// Step the physics world
-	world->stepSimulation(dt, 10);
+	world->stepSimulation(dt, 1);
 
 	return UPDATE_CONTINUE;
 }

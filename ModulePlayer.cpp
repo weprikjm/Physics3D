@@ -35,6 +35,21 @@ update_status ModulePlayer::Update(float dt)
 		s.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
 		App->physics3D->AddBody(s);
 	}
+
+	if(App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_DOWN)
+	{
+		Cube c(1,1,1);
+		c.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
+		App->physics3D->AddBody(c);
+	}
+
+	if(App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
+	{
+		Cylinder c(1,2);
+		c.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
+		App->physics3D->AddBody(c);
+	}
+
 	return UPDATE_CONTINUE;
 }
 

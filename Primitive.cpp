@@ -110,3 +110,43 @@ void Sphere::InnerRender() const
 {
 	glutSolidSphere(radius, 25, 25);
 }
+
+
+// CYLINDER ============================================
+Cylinder::Cylinder(float radius, float height) : Primitive(), radius(radius), height(height)
+{}
+
+void Cylinder::InnerRender() const
+{
+	int n = 30;
+
+	// Cylinder Bottom
+	glBegin(GL_POLYGON);
+	for(int i = 360; i >= 0 ; i -= (360 / n))
+	{
+		float a = i * M_PI / 180; // degrees to radians
+		glVertex3f(radius * cos(a), radius * sin(a), -height*0.5f);
+	}
+	glEnd();
+
+	// Cylinder Top
+	glBegin(GL_POLYGON);
+	glNormal3f(0.0f, 0.0f, 1.0f);
+	for(int i = 0; i <= 360; i += (360 / n))
+	{
+		float a = i * M_PI / 180; // degrees to radians
+		glVertex3f(radius * cos(a), radius * sin(a), height * 0.5);
+	}
+	glEnd();
+
+	// Cylinder "Cover"
+	glBegin(GL_QUAD_STRIP);
+	for(int i = 0; i < 480; i += (360 / n))
+	{
+		float a = i * M_PI / 180; // degrees to radians
+		
+		glVertex3f(radius * cos(a), radius * sin(a), height*0.5f);
+		glVertex3f(radius * cos(a), radius * sin(a), -height*0.5f);
+	}
+	glEnd();
+}

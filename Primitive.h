@@ -41,3 +41,15 @@ public:
 public:
 	float radius;
 };
+
+
+// ============================================
+class Cylinder : public Primitive
+{
+public:
+	Cylinder(float radius, float height);
+	void InnerRender() const;
+public:
+	float radius;
+	float height;
+};

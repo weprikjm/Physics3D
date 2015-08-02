@@ -19,7 +19,8 @@ bool ModuleSceneIntro::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
-	PhysBody3D* p = App->physics3D->AddBody(Cube(5, 1, 5), 0.0f);
+	PhysBody3D* p = App->physics3D->AddBody(Cube(50, 10, 50), 0.0f);
+	p->SetPos(0, -5, 0);
 
 	return ret;
 }
