@@ -7,15 +7,14 @@ class Primitive;
 
 struct PhysBody3D
 {
-	PhysBody3D(btCollisionShape* shape, btRigidBody* body, Primitive* primitive);
+public:
+	PhysBody3D(btRigidBody* body);
 	~PhysBody3D();
-
-	btCollisionShape* collision_shape;
-	btRigidBody* body;
-	Primitive* debug_draw;
 
 	void GetTransform(float* matrix) const;
 	void SetTransform(float* matrix) const;
 	void SetPos(float x, float y, float z);
-	void DebugDraw() const;
+
+private:
+	btRigidBody* body;
 };

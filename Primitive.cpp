@@ -8,8 +8,14 @@
 #pragma comment (lib, "glut/glut32.lib")
 
 // ------------------------------------------------------------
-Primitive::Primitive() : transform(IdentityMatrix), color(White), wire(false), axis(false)
+Primitive::Primitive() : transform(IdentityMatrix), color(White), wire(false), axis(false), type(PrimitiveTypes::Primitive_Point)
 {}
+
+// ------------------------------------------------------------
+PrimitiveTypes Primitive::GetType() const
+{
+	return type;
+}
 
 // ------------------------------------------------------------
 void Primitive::Render() const
@@ -95,7 +101,9 @@ void Primitive::Scale(float x, float y, float z)
 
 // CUBE ============================================
 Cube::Cube(float sizeX, float sizeY, float sizeZ) : Primitive(), size(sizeX, sizeY, sizeZ)
-{}
+{
+	type = PrimitiveTypes::Primitive_Cube;
+}
 
 void Cube::InnerRender() const
 {	
@@ -146,7 +154,9 @@ void Cube::InnerRender() const
 
 // SPHERE ============================================
 Sphere::Sphere(float radius) : Primitive(), radius(radius)
-{}
+{
+	type = PrimitiveTypes::Primitive_Sphere;
+}
 
 void Sphere::InnerRender() const
 {
@@ -156,7 +166,9 @@ void Sphere::InnerRender() const
 
 // CYLINDER ============================================
 Cylinder::Cylinder(float radius, float height) : Primitive(), radius(radius), height(height)
-{}
+{
+	type = PrimitiveTypes::Primitive_Cylinder;
+}
 
 void Cylinder::InnerRender() const
 {
@@ -194,8 +206,10 @@ void Cylinder::InnerRender() const
 }
 
 // LINE ==================================================
-Line::Line(float x, float y, float z) : Primitive(), origin(0,0,0), destination(x, y, z)
-{}
+Line::Line(float x, float y, float z) : Primitive(), origin(0, 0, 0), destination(x, y, z)
+{
+	type = PrimitiveTypes::Primitive_Line;
+}
 
 void Line::InnerRender() const
 {
@@ -213,7 +227,9 @@ void Line::InnerRender() const
 
 // PLANE ==================================================
 Plane::Plane(float x, float y, float z, float d) : Primitive(), normal(x, y, z), constant(d)
-{}
+{
+	type = PrimitiveTypes::Primitive_Plane;
+}
 
 void Plane::InnerRender() const
 {

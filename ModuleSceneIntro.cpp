@@ -3,7 +3,6 @@
 #include "ModuleSceneIntro.h"
 #include "Primitive.h"
 #include "PhysBody3D.h"
-#include "PhysPrimitive.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -35,7 +34,7 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update(float dt)
 {
-	ground->DebugDraw();
+	Plane(0, 1, 0, 0).Render();
 
 	return UPDATE_CONTINUE;
 }

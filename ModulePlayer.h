@@ -3,6 +3,8 @@
 #include "Globals.h"
 #include "p2Point.h"
 
+struct PhysVehicle3D;
+
 class ModulePlayer : public Module
 {
 public:
@@ -14,4 +16,6 @@ public:
 	bool CleanUp();
 
 public:
+
+	PhysVehicle3D* vehicle;
 };
