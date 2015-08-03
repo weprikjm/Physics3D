@@ -107,7 +107,7 @@ update_status ModuleCamera3D::Update(float dt)
 
 	// Mouse wheel -----------------------
 
-	float zDelta = App->input->GetMouseZ();
+	float zDelta = (float) App->input->GetMouseZ();
 
 	Position -= Reference;
 

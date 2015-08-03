@@ -175,6 +175,10 @@ public:
 	{}
 	vec3(const vec3 &u) : x(u.x), y(u.y), z(u.z)
 	{}
+	void Set(float x, float y, float z)
+	{
+		this->x = x; this->y = y; this->z = z;
+	}
 	vec3& operator = (const vec3 &u)
 	{
 		x = u.x; y = u.y; z = u.z; return *this;

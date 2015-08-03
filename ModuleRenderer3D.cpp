@@ -47,17 +47,7 @@ bool ModuleRenderer3D::Init()
 			LOG("Error initializing OpenGL! %s\n", gluErrorString(error));
 			ret = false;
 		}
-		/*
-		Gl.glMatrixMode(Gl.GL_MODELVIEW);
-		Gl.glLoadIdentity();
-		Gl.glEnable(Gl.GL_DOUBLEBUFFER);
-		Gl.glEnable(Gl.GL_DEPTH_TEST);
-		Gl.glShadeModel(Gl.GL_SMOOTH);
-		Gl.glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-		Gl.glClearDepth(1.0f);
-		Gl.glDepthFunc(Gl.GL_LEQUAL);
-		Gl.glHint(Gl.GL_PERSPECTIVE_CORRECTION_HINT, Gl.GL_NICEST);
-*/
+
 		//Initialize Modelview Matrix
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
@@ -139,50 +129,6 @@ update_status ModuleRenderer3D::Update(float dt)
 // PostUpdate present buffer to screen
 update_status ModuleRenderer3D::PostUpdate(float dt)
 {
-	// Draw Axis Grid
-	glLineWidth(2.0f);
-
-	glBegin(GL_LINES);
-
-	glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(1.0f, 0.1f, 0.0f); glVertex3f(1.1f, -0.1f, 0.0f);
-	glVertex3f(1.1f, 0.1f, 0.0f); glVertex3f(1.0f, -0.1f, 0.0f);
-
-	glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(-0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-	glVertex3f(0.05f, 1.25f, 0.0f); glVertex3f(0.0f, 1.15f, 0.0f);
-	glVertex3f(0.0f, 1.15f, 0.0f); glVertex3f(0.0f, 1.05f, 0.0f);
-
-	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-
-	glVertex3f(0.0f, 0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 1.0f);
-	glVertex3f(-0.05f, 0.1f, 1.05f); glVertex3f(0.05f, 0.1f, 1.05f);
-	glVertex3f(0.05f, 0.1f, 1.05f); glVertex3f(-0.05f, -0.1f, 1.05f);
-	glVertex3f(-0.05f, -0.1f, 1.05f); glVertex3f(0.05f, -0.1f, 1.05f);
-
-	glEnd();
-
-	glLineWidth(1.0f);
-	glColor3f(1.0f, 1.0f, 1.0f);
-
-	glBegin(GL_LINES);
-
-	float d = 50.0f;
-
-	for(float i = -d; i <= d; i += 1.0f)
-	{
-		glVertex3f(i, 0.0f, -d);
-		glVertex3f(i, 0.0f, d);
-		glVertex3f(-d, 0.0f, i);
-		glVertex3f(d, 0.0f, i);
-	}
-
-	glEnd();
-
 	SDL_GL_SwapWindow(App->window->window);
 	return UPDATE_CONTINUE;
 }

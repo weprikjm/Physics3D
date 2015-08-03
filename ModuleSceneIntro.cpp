@@ -19,8 +19,7 @@ bool ModuleSceneIntro::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
-	PhysBody3D* p = App->physics3D->AddBody(Cube(50, 10, 50), 0.0f);
-	p->SetPos(0, -5, 0);
+	ground = App->physics3D->AddBody(Plane(0, 1, 0, 0));
 
 	return ret;
 }
@@ -36,6 +35,8 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update(float dt)
 {
+	ground->DebugDraw();
+
 	return UPDATE_CONTINUE;
 }
 

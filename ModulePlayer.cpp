@@ -45,7 +45,7 @@ update_status ModulePlayer::Update(float dt)
 
 	if(App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
 	{
-		Cylinder c(1,2);
+		Cylinder c(0.2,0.5);
 		c.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
 		App->physics3D->AddBody(c);
 	}

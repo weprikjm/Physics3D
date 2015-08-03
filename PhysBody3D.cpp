@@ -7,6 +7,7 @@
 PhysBody3D::PhysBody3D(btCollisionShape* shape, btRigidBody* body, Primitive* primitive) : collision_shape(shape), body(body), debug_draw(primitive)
 {
 	primitive->wire = true;
+	primitive->axis = true;
 }
 
 // ---------------------------------------------------------

@@ -5,7 +5,7 @@
 
 #define BOUNCER_TIME 200
 
-struct PhysPrimitive;
+struct PhysBody3D;
 
 class ModuleSceneIntro : public Module
 {
@@ -22,5 +22,5 @@ public:
 public:
 
 	SDL_Texture* graphics;
-	PhysPrimitive* ground;
+	PhysBody3D* ground;
 };
