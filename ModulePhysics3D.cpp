@@ -115,7 +115,7 @@ PhysBody3D* ModulePhysics3D::AddBody(const Sphere& sphere, float mass)
 // ---------------------------------------------------------
 PhysBody3D* ModulePhysics3D::AddBody(const Cylinder& cylinder, float mass)
 {
-	btCollisionShape* colShape = new btCylinderShapeZ(btVector3(cylinder.radius, 0.0f, cylinder.height*0.5f));
+	btCollisionShape* colShape = new btCylinderShapeX(btVector3(cylinder.radius, cylinder.height*0.5f, 0.0f));
 	shapes.add(colShape);
 
 	btTransform startTransform;
@@ -181,15 +181,16 @@ PhysVehicle3D* ModulePhysics3D::AddVehicle(const VehicleInfo& info)
 	startTransform.setIdentity();
 
 	btVector3 localInertia(0, 0, 0);
-	colShape->calculateLocalInertia(info.mass, localInertia);
+	comShape->calculateLocalInertia(info.mass, localInertia);
 
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(info.mass, myMotionState, comShape, localInertia);
 
 	btRigidBody* body = new btRigidBody(rbInfo);
-
-	// Vehicle specifics ---
+	body->setContactProcessingThreshold(BT_LARGE_FLOAT);
 	body->setActivationState(DISABLE_DEACTIVATION);
+
+	world->addRigidBody(body);
 	
 	btRaycastVehicle::btVehicleTuning tuning;
 	tuning.m_frictionSlip = info.frictionSlip;
@@ -200,6 +201,8 @@ PhysVehicle3D* ModulePhysics3D::AddVehicle(const VehicleInfo& info)
 	tuning.m_suspensionStiffness = info.suspensionStiffness;
 
 	btRaycastVehicle* vehicle = new btRaycastVehicle(tuning, body, vehicle_raycaster);
+
+	vehicle->setCoordinateSystem(0, 1, 2);
 
 	for(int i = 0; i < info.num_wheels; ++i)
 	{

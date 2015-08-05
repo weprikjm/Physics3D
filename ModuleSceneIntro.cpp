@@ -18,7 +18,9 @@ bool ModuleSceneIntro::Start()
 	LOG("Loading Intro assets");
 	bool ret = true;
 
-	ground = App->physics3D->AddBody(Plane(0, 1, 0, 0));
+	//ground = App->physics3D->AddBody(Plane(0, 1, 0, 0));
+	ground = App->physics3D->AddBody(Cube(50,5,50), 0);
+	ground->SetPos(0, -5, 0);
 
 	return ret;
 }

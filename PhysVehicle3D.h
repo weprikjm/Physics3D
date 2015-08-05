@@ -13,11 +13,17 @@ struct Wheel
 	vec3 axis;
 	float suspensionRestLength; // max length for suspension in meters
 	float radius;
+	float width;
 	bool front; // is front wheel ?
+	bool drive; // does this wheel received engine power ?
+	bool brake; // does breakes affect this wheel ?
+	bool steering; // does this wheel turns ?
 };
 
 struct VehicleInfo
 {
+	~VehicleInfo();
+	
 	vec3 chassis_size;
 	vec3 chassis_offset;
 	float mass;
@@ -40,6 +46,9 @@ public:
 	~PhysVehicle3D();
 
 	void Render();
+	void ApplyEngineForce(float force);
+	void Brake(float force);
+	void Turn(float degrees);
 public:
 
 	VehicleInfo info;
