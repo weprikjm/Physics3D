@@ -13,6 +13,8 @@ public:
 	update_status Update(float dt);
 	bool CleanUp();
 
+	void Follow(PhysBody3D* body, float min, float max, float height);
+	void UnFollow();
 	void Look(const vec3 &Position, const vec3 &Reference, bool RotateAroundReference = false);
 	void Move(const vec3 &Movement);
 	float* GetViewMatrix();
@@ -28,4 +30,8 @@ public:
 private:
 
 	mat4x4 ViewMatrix, ViewMatrixInverse;
+	PhysBody3D* following;
+	float min_following_dist;
+	float max_following_dist;
+	float following_height;
 };

@@ -7,6 +7,7 @@
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled), vehicle(NULL)
 {
+	turn = acceleration = brake = 0.0f;
 }
 
 ModulePlayer::~ModulePlayer()
@@ -91,9 +92,9 @@ bool ModulePlayer::Start()
 	car.wheels[3].steering = false;
 
 	vehicle = App->physics3D->AddVehicle(car);
-	vehicle->SetPos(0, 1, 0);
+	vehicle->SetPos(0, 0, 0);
 
-	//vehicle = App->physics3D->AddVehicle2(car);
+	App->camera->Follow(vehicle, 3, 10, 1.5f);
 
 	return true;
 }
@@ -109,63 +110,31 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
-	float turn = RADTODEG * 210.0f; // degrees;
-
-	Cylinder c(1, 2);
-	c.wire = true;
-	c.axis = true;
-	c.Render();
-
-	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-	{
-		Sphere s(1);
-		s.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-		App->physics3D->AddBody(s);
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
-	{
-		Cube c(1,1,1);
-		c.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-		App->physics3D->AddBody(c);
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)
-	{
-		Cylinder c(0.5,1);
-		c.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
-		App->physics3D->AddBody(c);
-	}
+	turn = acceleration = brake = 0.0f;
 
 	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
-		vehicle->ApplyEngineForce(1000);
+		acceleration = MAX_ACCELERATION;
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
+	if(App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
 	{
-		vehicle->Turn(turn);
+		turn += DEGTORAD * TURN_DEGREES;
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_UP)
+	if(App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 	{
-		vehicle->Turn(0);
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
-	{
-		vehicle->Turn(-turn);
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_UP)
-	{
-		vehicle->Turn(0);
+		turn += DEGTORAD * -TURN_DEGREES;
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 	{
-		vehicle->Brake(100);
+		brake = BRAKE_POWER;
 	}
+
+	vehicle->ApplyEngineForce(acceleration);
+	vehicle->Turn(turn);
+	vehicle->Brake(brake);
 
 	return UPDATE_CONTINUE;
 }

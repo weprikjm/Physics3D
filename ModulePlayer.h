@@ -5,6 +5,10 @@
 
 struct PhysVehicle3D;
 
+#define MAX_ACCELERATION 700.0f
+#define TURN_DEGREES 35.0f
+#define BRAKE_POWER 50.0f
+
 class ModulePlayer : public Module
 {
 public:
@@ -18,4 +22,7 @@ public:
 public:
 
 	PhysVehicle3D* vehicle;
+	float turn;
+	float acceleration;
+	float brake;
 };

@@ -265,6 +265,28 @@ update_status ModulePhysics3D::Update(float dt)
 			item->data->Render();
 			item = item->next;
 		}
+
+		// drop some primitives on 1,2,3
+		if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+		{
+			Sphere s(1);
+			s.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
+			App->physics3D->AddBody(s);
+		}
+
+		if(App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
+		{
+			Cube c(1, 1, 1);
+			c.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
+			App->physics3D->AddBody(c);
+		}
+
+		if(App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)
+		{
+			Cylinder c(0.5, 1);
+			c.SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
+			App->physics3D->AddBody(c);
+		}
 	}
 
 	return UPDATE_CONTINUE;

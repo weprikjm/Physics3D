@@ -19,8 +19,8 @@ bool ModuleSceneIntro::Start()
 	bool ret = true;
 
 	//ground = App->physics3D->AddBody(Plane(0, 1, 0, 0));
-	ground = App->physics3D->AddBody(Cube(50,5,50), 0);
-	ground->SetPos(0, -5, 0);
+	ground = App->physics3D->AddBody(Cube(500,5,500), 0);
+	ground->SetPos(0, -1.5, 0);
 
 	return ret;
 }
