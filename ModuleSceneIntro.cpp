@@ -78,6 +78,7 @@ bool ModuleSceneIntro::Start()
 	s4.SetPos(-circuit_y + y1.height / 2, road_height - s1.radius*0.9, (circuit_x / 6) * 4);
 	App->physics3D->AddBody(s4, 0);
 
+	App->camera->Move(vec3(0, 30, -30));
 
 	return ret;
 }
