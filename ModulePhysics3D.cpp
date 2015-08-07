@@ -5,6 +5,7 @@
 #include "PhysBody3D.h"
 #include "PhysVehicle3D.h"
 #include "Bullet/src/btBulletDynamicsCommon.h"
+#include "Bullet\src\BulletCollision\CollisionShapes\btHeightfieldTerrainShape.h"
 
 #ifdef _DEBUG
 	#pragma comment (lib, "Bullet/bin/BulletDynamics_vs2010_debug.lib")
@@ -115,7 +116,7 @@ PhysBody3D* ModulePhysics3D::AddBody(const Sphere& sphere, float mass)
 // ---------------------------------------------------------
 PhysBody3D* ModulePhysics3D::AddBody(const Cylinder& cylinder, float mass)
 {
-	btCollisionShape* colShape = new btCylinderShapeX(btVector3(cylinder.radius, cylinder.height*0.5f, 0.0f));
+	btCollisionShape* colShape = new btCylinderShapeX(btVector3(cylinder.height*0.5f, cylinder.radius*2, 0.0f));
 	shapes.add(colShape);
 
 	btTransform startTransform;
@@ -151,6 +152,70 @@ PhysBody3D* ModulePhysics3D::AddBody(const Plane& plane)
 
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
 	btRigidBody::btRigidBodyConstructionInfo rbInfo(0.0f, myMotionState, colShape, localInertia);
+
+	btRigidBody* body = new btRigidBody(rbInfo);
+	PhysBody3D* pbody = new PhysBody3D(body);
+
+	body->setUserPointer(pbody);
+	world->addRigidBody(body);
+	bodies.add(pbody);
+
+	return pbody;
+}
+
+// ---------------------------------------------------------
+PhysBody3D*	ModulePhysics3D::AddHeighField(const char* filename, int width, int length)
+{
+	unsigned char* heightfieldData = new unsigned char[width*length];
+	{
+		for(int i = 0; i<width*length; i++)
+			heightfieldData[i] = 0;
+	}
+
+	FILE* heightfieldFile;
+	fopen_s(&heightfieldFile, filename, "r");
+	if(heightfieldFile)
+	{
+		int numBytes = fread(heightfieldData, 1, width*length, heightfieldFile);
+		//btAssert(numBytes);
+		if(!numBytes)
+		{
+			printf("couldn't read heightfield at %s\n", filename);
+		}
+		fclose(heightfieldFile);
+	}
+
+	//btScalar maxHeight = 20000.f;//exposes a bug
+	btScalar maxHeight = 100;
+
+	bool useFloatDatam = false;
+	bool flipQuadEdges = false;
+
+	int upIndex = 1;
+
+	btHeightfieldTerrainShape* heightFieldShape = new btHeightfieldTerrainShape(width, length, heightfieldData, maxHeight, upIndex, useFloatDatam, flipQuadEdges);
+	btVector3 mmin, mmax;
+	heightFieldShape->getAabb(btTransform::getIdentity(), mmin, mmax);
+
+	btCollisionShape* groundShape = heightFieldShape;
+
+	heightFieldShape->setUseDiamondSubdivision(true);
+
+	btVector3 localScaling(10, 1, 10);
+	localScaling[upIndex] = 1.f;
+	groundShape->setLocalScaling(localScaling);
+	shapes.add(groundShape);
+
+	//create ground object
+
+	btTransform startTransform;
+	startTransform.setIdentity();
+	startTransform.setOrigin(btVector3(0, 49.4, 0));
+
+	btVector3 localInertia(0, 0, 0);
+
+	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+	btRigidBody::btRigidBodyConstructionInfo rbInfo(0.0f, myMotionState, groundShape, localInertia);
 
 	btRigidBody* body = new btRigidBody(rbInfo);
 	PhysBody3D* pbody = new PhysBody3D(body);
@@ -243,7 +308,40 @@ void ModulePhysics3D::DeleteBody(PhysBody3D* pbody)
 update_status ModulePhysics3D::PreUpdate(float dt)
 {
 	// Step the physics world
-	world->stepSimulation(dt, 1);
+	world->stepSimulation(dt, 15);
+
+	// Detect collisions
+	int numManifolds = world->getDispatcher()->getNumManifolds();
+	for(int i = 0; i<numManifolds; i++)
+	{
+		btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
+		btCollisionObject* obA = (btCollisionObject*) (contactManifold->getBody0());
+		btCollisionObject* obB = (btCollisionObject*) (contactManifold->getBody1());
+
+		int numContacts = contactManifold->getNumContacts();
+		if(numContacts > 0)
+		{
+			PhysBody3D* pbodyA = (PhysBody3D*)obA->getUserPointer();
+			PhysBody3D* pbodyB = (PhysBody3D*)obB->getUserPointer();
+
+			if(pbodyA && pbodyB)
+			{
+				p2List_item<Module*>* item = pbodyA->collision_listeners.getFirst();
+				while(item)
+				{
+					item->data->OnCollision(pbodyA, pbodyB);
+					item = item->next;
+				}
+
+				item = pbodyB->collision_listeners.getFirst();
+				while(item)
+				{
+					item->data->OnCollision(pbodyB, pbodyA);
+					item = item->next;
+				}
+			}
+		}
+	}
 
 	return UPDATE_CONTINUE;
 }

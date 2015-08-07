@@ -1,9 +1,11 @@
 #pragma once
+#include "p2List.h"
 
 class btCollisionShape;
 class btRigidBody;
 class mat4x4;
 class Primitive;
+class Module;
 
 struct PhysBody3D
 {
@@ -17,4 +19,7 @@ public:
 
 private:
 	btRigidBody* body;
+
+public:
+	p2List<Module*> collision_listeners;
 };
